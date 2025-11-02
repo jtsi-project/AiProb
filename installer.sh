@@ -1,28 +1,49 @@
 #!/bin/bash
-# ... (Header, Konfigurasi, FASE 1 - SAMA) ...
+# --- AiProb Initiator/Installer (installer.sh) ---
+# FUNGSI: Mengunduh skrip instalasi core (init.sh) terbaru dari Repo Init.
+# Pengembang: Anjas Amar Pradana / JTSI
 
-# --- KONFIGURASI PROYEK DI INSTALLER INI ---
-VENV_NAME=".venv_aiprob"
-PYTHON_BIN="python3"
-GITHUB_REPO_PATH="jtsi-project/AiProb" # Path yang digunakan untuk GITHUB_VERSION_INI_URL
-INSTALLER_VERSION="v7.2-rc"
+set -e
 
-# ... (Semua Pre-check, venv, pip install - SAMA) ...
+# URL untuk mengunduh init.sh dari Repo Init (CORE LOGIC)
+GITHUB_INIT_CORE_RAW_URL="https://raw.githubusercontent.com/jtsi-project/AiProb-Init/main/init.sh"
+INIT_CORE_SCRIPT="init.sh"
 
-# --- TAHAP 5/5: Membuat app.py & HTML Templates ---
-echo "[TAHAP 5/5] Membuat File Utama (app.py, HTML & Runner)..."
+echo "================================================="
+echo "== AiProb v7.2 Initiator (ENTRY POINT) =="
+echo "================================================="
+echo "Memastikan Anda menjalankan skrip instalasi core terbaru."
 
-# A. Membuat app.py (Logic Dinamis & Perbaikan TemplateNotFound)
-GITHUB_URL_VAR=$GITHUB_REPO_PATH 
-# ... (Gunakan sed untuk menyisipkan GITHUB_URL_VAR ke GITHUB_VERSION_INI_URL di app.py) ...
-# ... (Seluruh kode Python app.py yang telah disempurnakan ada di sini) ...
+if [ -f "$INIT_CORE_SCRIPT" ]; then
+    echo "🚨 Peringatan: File '$INIT_CORE_SCRIPT' lama terdeteksi."
+    read -p "  -> Hapus yang lama dan unduh core instalasi terbaru? [Y/n] " PERSETUJUAN
+    if [ "$PERSETUJUAN" != "y" ] && [ "$PERSETUJUAN" != "Y" ] && [ "$PERSETUJUAN" != "" ]; then
+        echo "Initiator dibatalkan. Silakan jalankan ./$INIT_CORE_SCRIPT jika Anda yakin."
+        exit 0
+    fi
+    rm -f "$INIT_CORE_SCRIPT"
+fi
 
-# B. Membuat semua file HTML Template (base.html, setup.html, dll.)
+echo "[1/2] Mengunduh core instalasi terbaru ('$INIT_CORE_SCRIPT') dari GitHub..."
+if command -v curl &> /dev/null; then
+    curl -sSL -o "$INIT_CORE_SCRIPT" "$GITHUB_INIT_CORE_RAW_URL"
+elif command -v wget &> /dev/null; then
+    wget -q -O "$INIT_CORE_SCRIPT" "$GITHUB_INIT_CORE_RAW_URL"
+else
+    echo "ERROR: curl atau wget tidak ditemukan. Tidak dapat mengunduh '$INIT_CORE_SCRIPT'."
+    exit 1
+fi
 
-# C. Membuat runner.sh dan Menampilkan UX Akhir (Menu Interaktif)
-# ... (Kode runner.sh dan Menu Interaktif Pasca-Instalasi ada di sini) ...
+if [ ! -f "$INIT_CORE_SCRIPT" ]; then
+    echo "ERROR: Pengunduhan gagal. Cek koneksi atau URL GitHub: $GITHUB_INIT_CORE_RAW_URL"
+    exit 1
+fi
 
-# Menonaktifkan Venv internal skrip installer.sh
-deactivate
+chmod +x "$INIT_CORE_SCRIPT"
+echo "✅ Pengunduhan core instalasi berhasil."
 
-# Jangan lupa chmod +x runner.sh di akhir
+echo "[2/2] Mengalihkan ke Core Installer..."
+echo "-------------------------------------------------"
+echo "Silakan jalankan core instalasi yang baru diunduh untuk melanjutkan:"
+echo "   ./$INIT_CORE_SCRIPT"
+echo "-------------------------------------------------"
