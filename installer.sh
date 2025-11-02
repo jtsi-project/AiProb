@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- AiProb Initiator/Installer (installer.sh) ---
-# FUNGSI: Mengunduh skrip instalasi core (init.sh) terbaru dari Repo Init.
+# FUNGSI: Mengunduh skrip instalasi core (init.sh) terbaru dan menjalankan secara otomatis.
 # Pengembang: Anjas Amar Pradana / JTSI
 
 set -e
@@ -18,7 +18,7 @@ if [ -f "$INIT_CORE_SCRIPT" ]; then
     echo "🚨 Peringatan: File '$INIT_CORE_SCRIPT' lama terdeteksi."
     read -p "  -> Hapus yang lama dan unduh core instalasi terbaru? [Y/n] " PERSETUJUAN
     if [ "$PERSETUJUAN" != "y" ] && [ "$PERSETUJUAN" != "Y" ] && [ "$PERSETUJUAN" != "" ]; then
-        echo "Initiator dibatalkan. Silakan jalankan ./$INIT_CORE_SCRIPT jika Anda yakin."
+        echo "Initiator dibatalkan. Mohon jalankan ./$INIT_CORE_SCRIPT jika sudah ada."
         exit 0
     fi
     rm -f "$INIT_CORE_SCRIPT"
@@ -42,8 +42,13 @@ fi
 chmod +x "$INIT_CORE_SCRIPT"
 echo "✅ Pengunduhan core instalasi berhasil."
 
-echo "[2/2] Mengalihkan ke Core Installer..."
+echo "[2/2] Mengalihkan ke Core Installer secara Otomatis..."
 echo "-------------------------------------------------"
-echo "Silakan jalankan core instalasi yang baru diunduh untuk melanjutkan:"
-echo "   ./$INIT_CORE_SCRIPT"
+
+# *** AUTOMATED CHAINING ***
+# Menggantikan proses installer.sh dengan init.sh. UX terlihat mulus.
+exec "./$INIT_CORE_SCRIPT"
+
+# Jika exec gagal (sangat jarang):
+echo "ERROR: Gagal memulai Core Installer. Mohon jalankan secara manual: ./$INIT_CORE_SCRIPT"
 echo "-------------------------------------------------"
